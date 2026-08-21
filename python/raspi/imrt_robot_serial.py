@@ -3,21 +3,16 @@
 # A simple module for communicating with the NMBU Robotics IMRT100 robots
 # through serial.
 
-
 import sys
 import serial
 import threading
 import time
 import signal
 
-
-
-# Class for communicating with the NMBU IMRT100 robot
 class IMRTRobotSerial :
 
     MSG_SIZE = 10
 
-    # Constructor
     def __init__(self):
 
         print(__name__ + ": NMBU Robotics imrt100 motor serial")
@@ -37,14 +32,11 @@ class IMRTRobotSerial :
 
         self.shutdown_now = False
         signal.signal(signal.SIGINT, self._shutdown_signal)
-        
 
         # Thread for receiving data through serial
         self._rx_thread_ = threading.Thread(target=self._rx_thread)
 
 
-
-        
     # Method for opening serial port
     def connect(self, port_name="/dev/ttyACM0"):
         self.serial_port_ = serial.Serial(port_name, baudrate=115200, timeout=3)
@@ -52,13 +44,9 @@ class IMRTRobotSerial :
         return True
 
 
-
-    
     # Method for starting serial receive thread
     def run(self):
         self._rx_thread_.start()
-
-
 
 
     # Method for handling _shutdown signals
@@ -68,15 +56,11 @@ class IMRTRobotSerial :
         self._shutdown()
 
 
-
-
     # Method for gracefully shutting down serial receive thread
     def _shutdown(self, blocking=True):
         self._run_event.clear()
         if blocking:
             self._rx_thread_.join()
-
-
 
 
     # Method for transmitting commands through serial
