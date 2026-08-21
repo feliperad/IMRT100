@@ -44,8 +44,8 @@ while not motor_serial.shutdown_now :
         gain_motor_right = 3
 
     
-    speed_motor_left = gain_motor_right * 10
-    speed_motor_right = gain_motor_left * 10
+    speed_motor_left = gain_motor_right * 100
+    speed_motor_right = gain_motor_left * 100
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
 
