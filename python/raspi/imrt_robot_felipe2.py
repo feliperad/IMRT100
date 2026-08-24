@@ -1,13 +1,12 @@
 import imrt_robot_serial
 import time
 import sys
-import math
 
 kp = 1
 ti = 10
 td = 0 #0.01
 SP = 20
-error_threshold = 5
+error_threshold = 10
 front_sensor_threshold = 6
 previous_output = 100
 
@@ -40,7 +39,7 @@ while not motor_serial.shutdown_now :
     error = SP - dist_right
 
     if -1* error_threshold <= error <= error_threshold:
-        error ==0
+        error==0
 
     diff_e = (error - previous_error)/execution_period
     int_error += error
@@ -68,7 +67,7 @@ while not motor_serial.shutdown_now :
         elif correction <=-50:
             correction = -50
 
-        speed_motor_left = previous_output + correction
+        speed_motor_right = previous_output + correction
 
         if speed_motor_left >=150:
             speed_motor_left ==150
@@ -76,13 +75,12 @@ while not motor_serial.shutdown_now :
             speed_motor_left = 50
 
         previous_output = speed_motor_left
-        speed_motor_right = 100
+        speed_motor_left = 100
 
-    #print(f'right motor: {speed_motor_right}, left motor: {speed_motor_left}')
-    #print(f'previous output is {previous_output}, integral action is {integral_correction} int error is {int_error}')
+    
 
     print(f'sending commands of {speed_motor_left} and {speed_motor_right}')
-    motor_serial.send_command(int(speed_motor_left), speed_motor_right)
+    motor_serial.send_command(speed_motor_left, speed_motor_right)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
