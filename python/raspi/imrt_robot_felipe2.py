@@ -8,7 +8,7 @@ gain_motor_right = 0
 
 kp = 1
 ti = 100
-td = 0.01
+td = 0 #0.01
 SP = 20
 error_threshold = 5
 front_sensor_threshold = 6
@@ -56,8 +56,8 @@ while not motor_serial.shutdown_now :
 
         if correction >=100:
             correction ==100
-        elif correction <= 0:
-            correction = 0
+        elif correction <=-100:
+            correction = -100
 
         speed_motor_left = previous_output + correction
         previous_output = speed_motor_left
