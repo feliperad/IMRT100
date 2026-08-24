@@ -7,7 +7,7 @@ gain_motor_left = 0
 gain_motor_right = 0
 
 kp = 1
-ti = 100
+ti = 1000
 td = 0.01
 SP = 20
 error_threshold = 5
@@ -63,7 +63,7 @@ while not motor_serial.shutdown_now :
         previous_output = speed_motor_left
         speed_motor_right = 100
 
-    print(f'right motor value: {speed_motor_right}, error is {error}, integral action is {(1/ti)*int_error}')
+    print(f'right motor value: {speed_motor_right}, error is {error}, integral action is {int((1/ti)*int_error)}')
 
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
