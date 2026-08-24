@@ -54,13 +54,19 @@ while not motor_serial.shutdown_now :
     else:
         correction = kp*error + int((1/ti)*int_error + td*diff_e)
 
-        if correction >=100:
-            correction ==100
-        elif correction <=-100:
-            correction = -100
+        if correction >=50:
+            correction ==50
+        elif correction <=-50:
+            correction = -50
 
         speed_motor_left = previous_output + correction
         previous_output = speed_motor_left
+
+        if previous_output >=100:
+            previous_output ==100
+        elif previous_output <=-100:
+            previous_output = -100
+
         speed_motor_right = 100
 
     print(f'right motor value: {speed_motor_right}, error is {error}')
