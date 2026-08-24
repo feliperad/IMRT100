@@ -2,8 +2,8 @@ import imrt_robot_serial
 import time
 import sys
 
-kp = 1
-ti = 10
+kp = 2
+ti = 5
 td = 0 #0.01
 SP = 35
 error_threshold = 10
