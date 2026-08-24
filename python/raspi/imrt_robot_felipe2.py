@@ -7,7 +7,7 @@ ti = 5
 td = 0 #0.01
 SP = 35
 error_threshold = 10
-front_sensor_threshold = 6
+front_sensor_threshold = 20
 previous_output = 100
 
 execution_frequency = 10
@@ -52,7 +52,7 @@ while not motor_serial.shutdown_now :
     print(f'int error is {int_error}')
 
     if dist_front < front_sensor_threshold:
-        speed_motor_left = 0
+        speed_motor_left = -100
         speed_motor_right = 100
     else:
         integral_correction = int((1/ti)*int_error)
