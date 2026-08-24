@@ -4,7 +4,7 @@ import sys
 import math
 
 kp = 1
-ti = 100
+ti = 10
 td = 0 #0.01
 SP = 20
 error_threshold = 5
