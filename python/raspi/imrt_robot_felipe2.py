@@ -7,12 +7,12 @@ gain_motor_left = 0
 gain_motor_right = 0
 
 kp = 5
-ti = 10
+ti = 100
 td = 0.01
 SP = 20
 error_threshold = 5
 front_sensor_threshold = 6
-previous_output = 50
+previous_output = 100
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
@@ -61,7 +61,7 @@ while not motor_serial.shutdown_now :
 
         speed_motor_left = previous_output + correction
         previous_output = speed_motor_left
-        speed_motor_right = 50
+        speed_motor_right = 100
 
 
 
