@@ -45,10 +45,10 @@ while not motor_serial.shutdown_now :
     diff_e = (error - previous_error)/execution_period
     int_error += error
 
-    if integral_error >= 50:
-        integral_error = 50
-    if integral_error <= -50:
-        integral_error = -50
+    if int_error >= 50:
+        int_error = 50
+    if int_error <= -50:
+        int_error = -50
 
     if dist_front < front_sensor_threshold:
         speed_motor_left = 0
