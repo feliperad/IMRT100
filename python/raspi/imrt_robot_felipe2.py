@@ -3,9 +3,6 @@ import time
 import sys
 import math
 
-gain_motor_left = 0
-gain_motor_right = 0
-
 kp = 1
 ti = 100
 td = 0 #0.01
@@ -60,13 +57,13 @@ while not motor_serial.shutdown_now :
             correction = -50
 
         speed_motor_left = previous_output + correction
+
+        if speed_motor_left >=150:
+            speed_motor_left ==150
+        elif speed_motor_left <=50:
+            speed_motor_left = 50
+
         previous_output = speed_motor_left
-
-        if previous_output >=100:
-            previous_output ==100
-        elif previous_output <=-100:
-            previous_output = -100
-
         speed_motor_right = 100
 
     print(f'right motor value: {speed_motor_right}, error is {error}')
