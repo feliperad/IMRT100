@@ -38,7 +38,7 @@ while not motor_serial.shutdown_now :
 
     error = SP - dist_right
 
-    print(f'error ist {error}')
+    print(f'error is {error}')
 
     if -1* error_threshold <= error <= error_threshold:
         error==0
