@@ -4,10 +4,10 @@ import sys
 
 kp = 2
 ti = 5
-td = 0 #0.01
+td = 0.01
 SP = 100
 error_threshold = 10
-front_sensor_threshold = 20
+front_sensor_threshold = 25
 previous_output = 100
 
 execution_frequency = 10
