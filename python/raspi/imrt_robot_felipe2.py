@@ -7,7 +7,7 @@ gain_motor_left = 0
 gain_motor_right = 0
 
 kp = 1
-ti = 1000
+ti = 200
 td = 0.01
 SP = 20
 error_threshold = 5
