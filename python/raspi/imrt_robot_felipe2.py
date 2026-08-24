@@ -52,7 +52,7 @@ while not motor_serial.shutdown_now :
         speed_motor_left = 0
         speed_motor_right = 100
     else:
-        correction = kp*error + (1/ti)*int_error + td*diff_e
+        correction = int(kp*error + (1/ti)*int_error + td*diff_e)
 
         if correction >=100:
             correction ==400
