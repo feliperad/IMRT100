@@ -78,10 +78,10 @@ while not motor_serial.shutdown_now :
         previous_output = speed_motor_left
         speed_motor_right = 100
 
-    print(f'right motor: {speed_motor_right}, left motor: {speed_motor_left}')
-    print(f'previous output is {previous_output}, integral action is {integral_correction} int error is {int_error}')
+    #print(f'right motor: {speed_motor_right}, left motor: {speed_motor_left}')
+    #print(f'previous output is {previous_output}, integral action is {integral_correction} int error is {int_error}')
 
-
+    print(f'sending commands of {speed_motor_left} and {speed_motor_right}')
     motor_serial.send_command(speed_motor_left, speed_motor_right)
 
     iteration_end_time = time.time()
