@@ -51,35 +51,35 @@ while not motor_serial.shutdown_now :
 
     print(f'int error is {int_error}')
 
-    if dist_front < front_sensor_threshold:
+'''    if dist_front < front_sensor_threshold:
         speed_motor_left = -100
         speed_motor_right = 100
-    else:
-        integral_correction = int((1/ti)*int_error)
+    else:'''
+    integral_correction = int((1/ti)*int_error)
 
-        if integral_correction >= 50:
-            integral_correction = 50
-        if integral_correction <= -50:
-            integral_correction = -50
+    if integral_correction >= 50:
+        integral_correction = 50
+    if integral_correction <= -50:
+        integral_correction = -50
 
-        correction = kp*error + integral_correction + td*diff_e
+    correction = kp*error + integral_correction + td*diff_e
 
-        if correction >=50:
-            correction =50
-        elif correction <=-50:
-            correction = -50
+    if correction >=50:
+        correction =50
+    elif correction <=-50:
+        correction = -50
 
-        speed_motor_right = previous_output + correction
+    speed_motor_right = previous_output + correction
 
-        if speed_motor_right >=150:
-            speed_motor_right = 150
-        if speed_motor_right <= 50:
-            speed_motor_right = 50
+    if speed_motor_right >=150:
+        speed_motor_right = 150
+    if speed_motor_right <= 50:
+        speed_motor_right = 50
 
-        print(f'the previous output is {previous_output} and correction is {correction}')
+    print(f'the previous output is {previous_output} and correction is {correction}')
 
-        previous_output = speed_motor_right
-        speed_motor_left = 100
+    previous_output = speed_motor_right
+    speed_motor_left = 100
 
     
 
