@@ -42,7 +42,7 @@ while not motor_serial.shutdown_now :
 
     error = SP - dist_right
 
-    if error < error_threshold:
+    if -1* error_threshold <= error <= error_threshold:
         error ==0
 
     diff_e = (error - previous_error)/execution_period
@@ -63,7 +63,7 @@ while not motor_serial.shutdown_now :
         previous_output = speed_motor_left
         speed_motor_right = 100
 
-    print(f'right motor value: {speed_motor_right} and correction is {correction}')
+    print(f'right motor value: {speed_motor_right} and error is {error}')
 
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
