@@ -6,7 +6,7 @@ import math
 gain_motor_left = 0
 gain_motor_right = 0
 
-kp = 5
+kp = 1
 ti = 100
 td = 0.01
 SP = 20
@@ -56,8 +56,8 @@ while not motor_serial.shutdown_now :
 
         if correction >=100:
             correction ==400
-        elif correction <= -400:
-            correction = -400
+        elif correction <= 0:
+            correction = 0
 
         speed_motor_left = previous_output + correction
         previous_output = speed_motor_left
