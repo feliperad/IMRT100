@@ -65,7 +65,7 @@ while not motor_serial.shutdown_now :
         correction = kp*error + integral_correction + td*diff_e
 
         if correction >=50:
-            correction ==50
+            correction =50
         elif correction <=-50:
             correction = -50
 
