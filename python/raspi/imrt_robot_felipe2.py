@@ -49,7 +49,14 @@ while not motor_serial.shutdown_now :
         speed_motor_left = 0
         speed_motor_right = 100
     else:
-        correction = kp*error + int((1/ti)*int_error + td*diff_e)
+        integral_correction = int((1/ti)*int_error)
+
+        if integral_correction >= 50:
+            integral_correction = 50
+        if integral_correction <= -50:
+            integral_correction = -50
+
+        correction = kp*error + integral_correction + td*diff_e
 
         if correction >=50:
             correction ==50
@@ -67,7 +74,7 @@ while not motor_serial.shutdown_now :
         speed_motor_right = 100
 
     print(f'right motor value: {speed_motor_right}, error is {error}')
-    print(f'output is {speed_motor_left} previous output is {previous_output}, integral action is {int((1/ti)*int_error)} ')
+    print(f'output is {speed_motor_left} previous output is {previous_output}, integral action is {integral_correction} ')
 
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
