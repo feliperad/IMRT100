@@ -36,7 +36,7 @@ while not motor_serial.shutdown_now :
     dist_right = motor_serial.get_dist_2()
     print("Dist front:", dist_front, "   Dist right:", dist_right)
 
-    error = SP - dist_right
+    error = dist_right - SP
 
     if -1* error_threshold <= error <= error_threshold:
         error=0
