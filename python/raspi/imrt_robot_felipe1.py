@@ -1,6 +1,7 @@
 import imrt_robot_serial
 import time
 import sys
+import math
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
@@ -29,23 +30,22 @@ while not motor_serial.shutdown_now :
     print("Dist left:", dist_left, "   Dist right:", dist_right)
 
     if 40 < dist_left < 255:
-        gain_motor_left = 1
+        gain_motor_left = 100
     elif 20 < dist_left < 40:
-        gain_motor_left = 2
+        gain_motor_left = 200
     elif dist_left < 20:
-        gain_motor_left = 3
+        gain_motor_left = 300
 
 
     if 40 < dist_right < 255:
-        gain_motor_right = 1
+        gain_motor_right = 100
     elif 20 < dist_right < 40:
-        gain_motor_right = 2
+        gain_motor_right = 200
     elif dist_right < 20:
-        gain_motor_right = 3
-
+        gain_motor_right = 300
     
-    speed_motor_left = gain_motor_left * 100
-    speed_motor_right = gain_motor_right * 100
+    speed_motor_left = gain_motor_left + math.sin(time.time())
+    speed_motor_right = gain_motor_right
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
 
