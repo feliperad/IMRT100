@@ -70,7 +70,7 @@ while not motor_serial.shutdown_now :
         speed_motor_right = 100
 
     print(f'right motor value: {speed_motor_right}, error is {error}')
-    print(f' previous output is {previous_output}, integral action is {int((1/ti)*int_error)} ')
+    print(f'output is {speed_motor_left} previous output is {previous_output}, integral action is {int((1/ti)*int_error)} ')
 
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
