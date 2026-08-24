@@ -5,7 +5,7 @@ import sys
 kp = 1
 ti = 10
 td = 0 #0.01
-SP = 20
+SP = 35
 error_threshold = 10
 front_sensor_threshold = 6
 previous_output = 100
