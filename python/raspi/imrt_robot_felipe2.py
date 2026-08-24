@@ -78,11 +78,6 @@ while not motor_serial.shutdown_now :
 
         print(f'the previous output is {previous_output} and correction is {correction}')
 
-        if speed_motor_right >=150:
-            speed_motor_right ==150
-        elif speed_motor_right <=50:
-            speed_motor_left = 50
-
         previous_output = speed_motor_right
         speed_motor_left = 100
 

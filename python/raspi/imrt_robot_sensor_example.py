@@ -29,7 +29,7 @@ while not motor_serial.shutdown_now :
     dist_right = motor_serial.get_dist_2()
     print("Dist left:", dist_left, "   Dist right:", dist_right)
 
-    gain = 8
+    gain = 0
     speed_motor_left = dist_right * gain
     speed_motor_right = dist_left * gain
 
