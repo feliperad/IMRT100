@@ -38,10 +38,10 @@ while not motor_serial.shutdown_now :
 
     error = SP - dist_right
 
-    print(f'sp is {SP} and PV is {dist_right}, then error is {error}')
-
     if -1* error_threshold <= error <= error_threshold:
         error=0
+
+    print(f'sp is {SP} and PV is {dist_right}, then error is {error}')
 
     diff_e = (error - previous_error)/execution_period
     int_error += error
