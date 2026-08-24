@@ -55,7 +55,7 @@ while not motor_serial.shutdown_now :
         correction = int(kp*error + (1/ti)*int_error + td*diff_e)
 
         if correction >=100:
-            correction ==400
+            correction ==100
         elif correction <= 0:
             correction = 0
 
@@ -63,7 +63,7 @@ while not motor_serial.shutdown_now :
         previous_output = speed_motor_left
         speed_motor_right = 100
 
-    print(f'right motor value: {speed_motor_right}')
+    print(f'right motor value: {speed_motor_right} and correction is {correction}')
 
 
     motor_serial.send_command(speed_motor_left, speed_motor_right)
