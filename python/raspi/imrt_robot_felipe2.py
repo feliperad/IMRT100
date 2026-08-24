@@ -51,7 +51,7 @@ while not motor_serial.shutdown_now :
     if int_error <= -50:
         int_error = -50
 
-    print(f'integral of error is {int_error}')
+    #print(f'integral of error is {int_error}')
 
     # if dist_front < front_sensor_threshold:
     #     speed_motor_left = -100
@@ -78,14 +78,14 @@ while not motor_serial.shutdown_now :
     if speed_motor_right <= 50:
         speed_motor_right = 50
 
-    print(f'the previous output is {previous_output} and correction is {correction}')
+    #print(f'the previous output is {previous_output} and correction is {correction}')
 
     previous_output = speed_motor_right
     speed_motor_left = 100
 
     
 
-    print(f'sending commands of {speed_motor_left} and {speed_motor_right}')
+    #print(f'sending commands of {speed_motor_left} and {speed_motor_right}')
     motor_serial.send_command(speed_motor_left, int(speed_motor_right))
 
     iteration_end_time = time.time()
