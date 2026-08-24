@@ -69,12 +69,12 @@ while not motor_serial.shutdown_now :
 
         speed_motor_right = previous_output + correction
 
-        if speed_motor_left >=150:
-            speed_motor_left ==150
-        elif speed_motor_left <=50:
+        if speed_motor_right >=150:
+            speed_motor_right ==150
+        elif speed_motor_right <=50:
             speed_motor_left = 50
 
-        previous_output = speed_motor_left
+        previous_output = speed_motor_right
         speed_motor_left = 100
 
     
