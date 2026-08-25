@@ -23,7 +23,7 @@ motor_serial.run()
 # print("Goodbye")
 
 t0 = time.time()
-while not motor_serial.shutdown_now and time.time() - t0 < 2:
+while not motor_serial.shutdown_now and time.time() - t0 < 4:
     motor_serial.send_command(200, 0)
     time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
