@@ -35,6 +35,7 @@ def kneeTurnCcw():
 
 
 kneeTurnCw()
+time.sleep(1)
 kneeTurnCcw()
 
 print("Goodbye")
