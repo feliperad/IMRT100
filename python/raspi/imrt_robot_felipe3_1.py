@@ -15,6 +15,26 @@ front_threshold = 30
 execution_frequency = 10
 execution_period = 1. / execution_frequency
 
+def kneeTurnCw():
+    t0 = time.time()
+    while not motor_serial.shutdown_now and time.time() - t0 < 2:
+        motor_serial.send_command(200, 0)
+        time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
+
+    for _ in range(5):
+        motor_serial.send_command(0, 0)
+        time.sleep(0.05)
+
+def kneeTurnCcw():
+    t0 = time.time()
+    while not motor_serial.shutdown_now and time.time() - t0 < 3:
+        motor_serial.send_command(0, 200)
+        time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
+
+    for _ in range(5):
+        motor_serial.send_command(0, 0)
+        time.sleep(0.05)
+
 # ---------------------------------------------------------------------------
 # Parametros do filtro
 # CONFIRME A UNIDADE: rode uma vez imprimindo o valor cru com o robo a uma
@@ -102,8 +122,7 @@ while not motor_serial.shutdown_now:
 
     if front_blocked:
         print('Obstacle ahead!')
-        speed_motor_right = 100
-        speed_motor_left = -100
+        kneeTurnCcw()
 
     elif dist_right <= min_threshold:
         print('too close to the wall!')
@@ -122,8 +141,7 @@ while not motor_serial.shutdown_now:
 
     elif dist_right >= max_threshold:
         print('big deviation from the wall! A turn, maybe?')
-        speed_motor_right = 0
-        speed_motor_left = 200
+        kneeTurnCw()
 
     # else:
     #     print('estado nao previsto - parando por seguranca')
