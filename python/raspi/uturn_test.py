@@ -13,7 +13,7 @@ except Exception:
 motor_serial.run()
 
 
-def kneeTurn():
+def kneeTurnCw():
     t0 = time.time()
     while not motor_serial.shutdown_now and time.time() - t0 < 2:
         motor_serial.send_command(200, 0)
@@ -23,7 +23,18 @@ def kneeTurn():
         motor_serial.send_command(0, 0)
         time.sleep(0.05)
 
+def kneeTurnCcw():
+    t0 = time.time()
+    while not motor_serial.shutdown_now and time.time() - t0 < 2:
+        motor_serial.send_command(0, 200)
+        time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
-kneeTurn()
+    for _ in range(5):
+        motor_serial.send_command(0, 0)
+        time.sleep(0.05)
+
+
+kneeTurnCw()
+kneeTurnCcw()
 
 print("Goodbye")
