@@ -10,7 +10,7 @@ from statistics import median
 min_threshold = 10
 median_threshold = 20
 max_threshold = 200
-front_threshold = 40
+front_threshold = 20
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
