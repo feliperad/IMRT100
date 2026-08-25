@@ -16,10 +16,16 @@ execution_frequency = 10
 execution_period = 1. / execution_frequency
 
 def kneeTurnCw():
+    for _ in range(5):
+        speed_motor_left = 50
+        speed_motor_right = 50
+        motor_serial.send_command(speed_motor_left, speed_motor_right)
+        time.sleep(0.05)
+
     t0 = time.time()
     while not motor_serial.shutdown_now and time.time() - t0 < 1:
-        speed_motor_left = 200
-        speed_motor_right = 0
+        speed_motor_left = 100
+        speed_motor_right = -100
         motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
