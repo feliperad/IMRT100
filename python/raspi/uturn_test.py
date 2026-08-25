@@ -12,6 +12,8 @@ except Exception:
 
 motor_serial.run()
 
+time.sleep(5)
+
 while not motor_serial.shutdown_now:
     speed_motor_right = -200 ; speed_motor_left = 200
     motor_serial.send_command(speed_motor_left, speed_motor_right)
