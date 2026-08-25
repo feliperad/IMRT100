@@ -9,7 +9,7 @@ from statistics import median
 # ---------------------------------------------------------------------------
 min_threshold = 10
 median_threshold = 30
-max_threshold = 100
+max_threshold = 200
 front_threshold = 40
 
 execution_frequency = 10
