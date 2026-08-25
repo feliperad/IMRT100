@@ -92,6 +92,8 @@ while not motor_serial.shutdown_now:
     print(f"front: {raw_front} -> {dist_front:6.1f} | "
           f"right: {raw_right} -> {dist_right:6.1f}")
 
+    print(f'raw right sensor: {raw_right}')
+
     # Parada de emergencia: leitura crua tem zero lag, o filtro atrasa a reacao
     front_blocked = dist_front < front_threshold
     if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front < front_threshold:
@@ -107,12 +109,12 @@ while not motor_serial.shutdown_now:
         speed_motor_right = 200
         speed_motor_left = 100
 
-    elif dist_right < median_threshold:
+    elif min_threshold < dist_right <= median_threshold:
         print('correct distance!')
         speed_motor_right = 100
         speed_motor_left = 100
 
-    elif dist_right < max_threshold:
+    elif median_threshold < dist_right < max_threshold:
         print('little deviation from the wall!')
         speed_motor_right = 100
         speed_motor_left = 200
