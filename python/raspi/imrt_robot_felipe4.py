@@ -15,7 +15,7 @@ max_threshold = 50.0          # acima disso: parede sumiu
 front_threshold = 5.0         # frente bloqueada
 
 setpoint = (min_threshold + median_threshold) / 2.0   # 15 cm
-base_speed = 25.0
+base_speed = 50.0
 u_min, u_max = -100.0, 100.0
 error_clamp = 20.0            # limita o erro em aberturas
 
