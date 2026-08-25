@@ -199,7 +199,7 @@ while not motor_serial.shutdown_now:
           f"right: {raw_right} -> {dist_right:6.1f} | "
           f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
-    motor_serial.send_command(speed_motor_left, speed_motor_right)
+    motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
