@@ -8,7 +8,7 @@ from statistics import median
 # Parametros de navegacao (os seus, sem alteracao)
 # ---------------------------------------------------------------------------
 min_threshold = 10
-median_threshold = 30
+median_threshold = 20
 max_threshold = 200
 front_threshold = 40
 
@@ -17,7 +17,7 @@ execution_period = 1. / execution_frequency
 
 def kneeTurnCw():
     t0 = time.time()
-    while not motor_serial.shutdown_now and time.time() - t0 < 2:
+    while not motor_serial.shutdown_now and time.time() - t0 < 1:
         speed_motor_left = 200
         speed_motor_right = 0
         motor_serial.send_command(speed_motor_left, speed_motor_right)
@@ -31,7 +31,7 @@ def kneeTurnCw():
 
 def kneeTurnCcw():
     t0 = time.time()
-    while not motor_serial.shutdown_now and time.time() - t0 < 2:
+    while not motor_serial.shutdown_now and time.time() - t0 < 1:
         speed_motor_left = 0
         speed_motor_right = 200
         motor_serial.send_command(speed_motor_left, speed_motor_right)
