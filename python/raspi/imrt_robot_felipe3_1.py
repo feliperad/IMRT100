@@ -124,13 +124,13 @@ while not motor_serial.shutdown_now:
         speed_motor_right = -50
         speed_motor_left = 200
 
-    else:
-        print('estado nao previsto - parando por seguranca')
-        speed_motor_right = 0
-        speed_motor_left = 0
+    # else:
+    #     print('estado nao previsto - parando por seguranca')
+    #     speed_motor_right = 0
+    #     speed_motor_left = 0
 
     print(f'sending commands of {speed_motor_left} and {speed_motor_right}\n')
-    #motor_serial.send_command(speed_motor_left, speed_motor_right)
+    motor_serial.send_command(speed_motor_left, speed_motor_right)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
