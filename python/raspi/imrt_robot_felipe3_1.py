@@ -68,13 +68,14 @@ except Exception:
 motor_serial.run()
 
 print("Entering loop. Ctrl+c to terminate")
+time.sleep(3)
 
 # ---------------------------------------------------------------------------
 # Loop principal
 # ---------------------------------------------------------------------------
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
-
+    
     raw_front = motor_serial.get_dist_1()
     raw_right = motor_serial.get_dist_2()
 
@@ -130,7 +131,7 @@ while not motor_serial.shutdown_now:
     #     speed_motor_left = 0
 
     print(f'sending commands of {speed_motor_left} and {speed_motor_right}\n')
-    #motor_serial.send_command(speed_motor_left, speed_motor_right)
+    motor_serial.send_command(speed_motor_left, speed_motor_right)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
