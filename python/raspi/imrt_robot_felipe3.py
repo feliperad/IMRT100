@@ -2,7 +2,7 @@ import imrt_robot_serial
 import time
 import sys
 
-min_threshold = 100
+min_threshold = 75
 median_threshold = 150
 max_threshold = 170
 front_threshold = 30
