@@ -18,34 +18,32 @@ execution_period = 1. / execution_frequency
 def kneeTurnCw():
     t0 = time.time()
     while not motor_serial.shutdown_now and time.time() - t0 < 2:
-        motor_serial.send_command(200, 0)
+        speed_motor_left = 200
+        speed_motor_right = 0
+        motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
     for _ in range(5):
-        motor_serial.send_command(0, 0)
+        speed_motor_left = speed_motor_right = 0
+        motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.05)
 
 def kneeTurnCcw():
     t0 = time.time()
     while not motor_serial.shutdown_now and time.time() - t0 < 2:
-        motor_serial.send_command(0, 200)
+        speed_motor_left = 0
+        speed_motor_right = 200
+        motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
     for _ in range(5):
-        motor_serial.send_command(0, 0)
+        speed_motor_left = speed_motor_right = 0
+        motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.05)
 
-# ---------------------------------------------------------------------------
-# Parametros do filtro
-# CONFIRME A UNIDADE: rode uma vez imprimindo o valor cru com o robo a uma
-# distancia conhecida da parede. Se DIST_MIN/DIST_MAX estiverem na unidade
-# errada, o filtro descarta TODAS as amostras e o robo nunca sai do lugar.
-# ---------------------------------------------------------------------------
 DIST_MIN = 2.0
-DIST_MAX = 400.0
-
+DIST_MAX = 255.0
 EMERGENCY_ON_RAW = True   # parada de emergencia usa leitura crua (sem lag)
-
 
 class RangeFilter:
     """Rejeicao de invalidos -> mediana (mata outlier) -> EMA (suaviza)."""
@@ -70,13 +68,9 @@ class RangeFilter:
 def is_valid(d):
     return d is not None and DIST_MIN < d < DIST_MAX
 
-
 filter_front = RangeFilter(alpha=0.5, n=3)   # rapido: sensor de seguranca
 filter_right = RangeFilter(alpha=0.3, n=5)   # suave: parede muda devagar
 
-# ---------------------------------------------------------------------------
-# Conexao
-# ---------------------------------------------------------------------------
 motor_serial = imrt_robot_serial.IMRTRobotSerial()
 
 try:
@@ -90,9 +84,6 @@ motor_serial.run()
 print("Entering loop. Ctrl+c to terminate")
 time.sleep(3)
 
-# ---------------------------------------------------------------------------
-# Loop principal
-# ---------------------------------------------------------------------------
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
     
