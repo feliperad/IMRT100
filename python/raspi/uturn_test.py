@@ -12,9 +12,10 @@ except Exception:
 
 motor_serial.run()
 
-speed_motor_right = -200 ; speed_motor_left = 200
-motor_serial.send_command(speed_motor_left, speed_motor_right)
-time.sleep(3)
-motor_serial.send_command(0, 0)
+while not motor_serial.shutdown_now:
+    speed_motor_right = -200 ; speed_motor_left = 200
+    motor_serial.send_command(speed_motor_left, speed_motor_right)
+    time.sleep(3)
+    motor_serial.send_command(0, 0)
 
 print("Goodbye")
