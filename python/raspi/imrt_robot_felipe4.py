@@ -88,6 +88,7 @@ while not motor_serial.shutdown_now:
         print('Obstacle ahead!')
         while dist_right > min_threshold:
             print('Obstacle ahead!')
+            dist_right = filter_right.update(raw_right)
             print(dist_right)
             speed_motor_right = 50
             speed_motor_left = -50
