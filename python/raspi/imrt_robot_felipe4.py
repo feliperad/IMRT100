@@ -86,13 +86,16 @@ while not motor_serial.shutdown_now:
 
     if front_blocked:
         print('Obstacle ahead!')
-        while dist_right > min_threshold:
-            print('Obstacle ahead!')
+        while not motor_serial.shutdown_now:
+            raw_right = motor_serial.get_dist_2()
             dist_right = filter_right.update(raw_right)
             print(dist_right)
             speed_motor_right = 50
             speed_motor_left = -50
             motor_serial.send_command(speed_motor_left, speed_motor_right)
+
+            if dist_right < min_threshold:
+                break
 
 
     elif dist_right <= min_threshold:
