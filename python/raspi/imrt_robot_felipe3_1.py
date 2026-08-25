@@ -24,7 +24,8 @@ def kneeTurnCw():
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
     for _ in range(5):
-        speed_motor_left = speed_motor_right = 0
+        speed_motor_left = 0
+        speed_motor_right = 0
         motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.05)
 
@@ -37,7 +38,8 @@ def kneeTurnCcw():
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
     for _ in range(5):
-        speed_motor_left = speed_motor_right = 0
+        speed_motor_left = 0
+        speed_motor_right = 0
         motor_serial.send_command(speed_motor_left, speed_motor_right)
         time.sleep(0.05)
 
