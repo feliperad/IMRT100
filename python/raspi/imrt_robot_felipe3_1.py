@@ -121,7 +121,7 @@ while not motor_serial.shutdown_now:
 
     elif dist_right >= max_threshold:
         print('big deviation from the wall! A turn, maybe?')
-        speed_motor_right = -50
+        speed_motor_right = 0
         speed_motor_left = 200
 
     # else:
