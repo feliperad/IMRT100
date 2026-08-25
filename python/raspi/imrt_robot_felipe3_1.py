@@ -116,6 +116,7 @@ while not motor_serial.shutdown_now:
     if front_blocked:
         print('Obstacle ahead!')
         kneeTurnCcw()
+        speed_motor_right = speed_motor_left = 0
 
     elif dist_right <= min_threshold:
         print('too close to the wall!')
@@ -135,6 +136,7 @@ while not motor_serial.shutdown_now:
     elif dist_right >= max_threshold:
         print('big deviation from the wall! A turn, maybe?')
         kneeTurnCw()
+        speed_motor_right = speed_motor_left = 0
 
     # else:
     #     print('estado nao previsto - parando por seguranca')
