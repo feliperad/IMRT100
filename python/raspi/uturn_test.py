@@ -23,4 +23,7 @@ def kneeTurn():
         motor_serial.send_command(0, 0)
         time.sleep(0.05)
 
+
+kneeTurn()
+
 print("Goodbye")
