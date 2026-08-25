@@ -4,7 +4,7 @@ import sys
 
 min_threshold = 100
 median_threshold = 150
-max_threshold = 200
+max_threshold = 170
 front_threshold = 30
 
 execution_frequency = 10
