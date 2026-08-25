@@ -27,7 +27,7 @@ def kneeTurnCw():
 
 def kneeTurnCcw():
     t0 = time.time()
-    while not motor_serial.shutdown_now and time.time() - t0 < 3:
+    while not motor_serial.shutdown_now and time.time() - t0 < 2:
         motor_serial.send_command(0, 200)
         time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
 
