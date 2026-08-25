@@ -4,52 +4,17 @@ import sys
 from collections import deque
 from statistics import median
 
-# ---------------------------------------------------------------------------
-# Parametros de navegacao (os seus, sem alteracao)
-# ---------------------------------------------------------------------------
+kp = 2
 min_threshold = 10
 median_threshold = 20
 max_threshold = 50
 front_threshold = 5
+previous_output = 50
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
 
-def kneeTurnCw():
-    for _ in range(10):
-        speed_motor_left = 50
-        speed_motor_right = 50
-        motor_serial.send_command(speed_motor_left, speed_motor_right)
-        time.sleep(0.05)
-
-    t0 = time.time()
-    while not motor_serial.shutdown_now and time.time() - t0 < 1:
-        speed_motor_left = 100
-        speed_motor_right = -100
-        motor_serial.send_command(speed_motor_left, speed_motor_right)
-        time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
-
-    for _ in range(5):
-        speed_motor_left = 0
-        speed_motor_right = 0
-        motor_serial.send_command(speed_motor_left, speed_motor_right)
-        time.sleep(0.05)
-
-def kneeTurnCcw():
-    t0 = time.time()
-    while not motor_serial.shutdown_now and time.time() - t0 < 1:
-        speed_motor_left = 0
-        speed_motor_right = 200
-        motor_serial.send_command(speed_motor_left, speed_motor_right)
-        time.sleep(0.1)          # 10 Hz, mesma taxa do wall-following
-
-    for _ in range(5):
-        speed_motor_left = 0
-        speed_motor_right = 0
-        motor_serial.send_command(speed_motor_left, speed_motor_right)
-        time.sleep(0.05)
-
-DIST_MIN = 2.0
+DIST_MIN = 1.0
 DIST_MAX = 255.0
 EMERGENCY_ON_RAW = True   # parada de emergencia usa leitura crua (sem lag)
 
@@ -121,33 +86,35 @@ while not motor_serial.shutdown_now:
 
     if front_blocked:
         print('Obstacle ahead!')
-        kneeTurnCcw()
-        speed_motor_right = speed_motor_left = 0
+        while dist_right > min_threshold:
+            speed_motor_right = 25
+            speed_motor_left = -25
+            motor_serial.send_command(speed_motor_left, speed_motor_right)
+
 
     elif dist_right <= min_threshold:
         print('too close to the wall!')
-        speed_motor_right = 75
-        speed_motor_left = 50
+        error = -1
+        speed_motor_right = 50
+        speed_motor_left = previous_output + kp*error
 
     elif min_threshold < dist_right <= median_threshold:
         print('correct distance!')
+        error = 0
         speed_motor_right = 50
         speed_motor_left = 50
 
     elif median_threshold < dist_right < max_threshold:
         print('little deviation from the wall!')
+        error = 1
         speed_motor_right = 50
-        speed_motor_left = 75
+        speed_motor_left = previous_output + kp*error
 
     elif dist_right >= max_threshold:
+        error = 2
         print('big deviation from the wall! A turn, maybe?')
-        kneeTurnCw()
-        speed_motor_right = speed_motor_left = 0
-
-    # else:
-    #     print('estado nao previsto - parando por seguranca')
-    #     speed_motor_right = 0
-    #     speed_motor_left = 0
+        speed_motor_right = 50
+        speed_motor_left = previous_output + kp*error
 
     print(f'sending commands of {speed_motor_left} and {speed_motor_right}\n')
     motor_serial.send_command(speed_motor_left, speed_motor_right)
