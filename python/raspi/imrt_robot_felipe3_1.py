@@ -120,18 +120,18 @@ while not motor_serial.shutdown_now:
 
     elif dist_right <= min_threshold:
         print('too close to the wall!')
-        speed_motor_right = 150
-        speed_motor_left = 100
+        speed_motor_right = 75
+        speed_motor_left = 50
 
     elif min_threshold < dist_right <= median_threshold:
         print('correct distance!')
-        speed_motor_right = 100
-        speed_motor_left = 100
+        speed_motor_right = 50
+        speed_motor_left = 50
 
     elif median_threshold < dist_right < max_threshold:
         print('little deviation from the wall!')
-        speed_motor_right = 100
-        speed_motor_left = 150
+        speed_motor_right = 50
+        speed_motor_left = 75
 
     elif dist_right >= max_threshold:
         print('big deviation from the wall! A turn, maybe?')
