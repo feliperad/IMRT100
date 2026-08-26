@@ -217,18 +217,22 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            manobra(base_speed, -base_speed, 2)
+            manobra(base_speed, -base_speed, 2.5)
             if dist_right < 1.2*setpoint:
+                print('going to state 0 - rastrear parede')
+                rastrear_parede = True
+                front_blocked = False
+                uturn = False
                 break
+
+            if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+                print('going to state 1 - front blocked (left turn)')
+                front_blocked = True
+                uturn = False
+                rastrear_parede = False
+                break
+
             manobra(base_speed, base_speed, 4)
-
-            
-
-        # transições
-        print('going to state 0 - rastrear parede')
-        rastrear_parede = True
-        front_blocked = False
-        uturn = False
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
