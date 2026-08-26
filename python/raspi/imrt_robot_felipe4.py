@@ -105,13 +105,18 @@ while not motor_serial.shutdown_now:
     front_blocked = dist_front <= front_threshold
     if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
         front_blocked = True
+        uturn = False
+        rastrear_parede = False
 
     if front_blocked == False and dist_right <= max_threshold:
+        front_blocked = True
+        uturn = False
         rastrear_parede = True
 
     if dist_right > max_threshold:
-        rastrear_parede = False
+        front_blocked = True
         uturn = True
+        rastrear_parede = False
 
     #-----------------------------
     # estado 1 - curva à esquerda
