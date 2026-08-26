@@ -6,7 +6,7 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 2.0
-ti = 1e9
+ti = 0.8
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 15.0               # cm
