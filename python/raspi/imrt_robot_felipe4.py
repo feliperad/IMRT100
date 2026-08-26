@@ -5,7 +5,7 @@ from collections import deque
 from statistics import median
 
 # ---------------------------------------------------------------- controle
-kp = 5.0
+kp = 3.0
 ti = 1e9
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
@@ -134,6 +134,10 @@ while not motor_serial.shutdown_now:
 
     # ------------------------------------------------------------- PID
     error = max(error_min, min(error_max, dist_right - setpoint))
+
+    if -1.1*setpoint <= error <= 1.1*setpoint:
+        error = 0
+
     diff_error = (error - previous_error) / execution_period
 
     # Forma ISA: kp*(e + (1/ti)*integral + td*derivada)
