@@ -133,12 +133,12 @@ while not motor_serial.shutdown_now:
                 time.sleep(execution_period - turn_duration)
 
         motor_serial.send_command(0, 0)
-        print('ir para rastrear parede')
 
-        # transições 
-        # rastrear_parede = True
-        # front_blocked = False
-        # uturn = False
+        # transições
+        print('') 
+        rastrear_parede = True
+        front_blocked = False
+        uturn = False
     #-----------------------------
 
     #-----------------------------
