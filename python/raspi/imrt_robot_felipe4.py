@@ -226,7 +226,7 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            manobra(base_speed, -base_speed, 2.5)
+            manobra(base_speed, -base_speed, 2.8)
 
             raw_front = conversao_raw_cm(motor_serial.get_dist_1())
             raw_right = conversao_raw_cm(motor_serial.get_dist_2())
