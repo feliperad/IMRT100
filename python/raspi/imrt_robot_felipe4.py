@@ -125,7 +125,7 @@ while not motor_serial.shutdown_now:
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
-            if dist_right < 1.2*setpoint:
+            if dist_front > front_clear and dist_right < 1.2*setpoint:
                 break
 
             turn_duration = time.time() - turn_start_time
@@ -133,6 +133,7 @@ while not motor_serial.shutdown_now:
                 time.sleep(execution_period - turn_duration)
 
         motor_serial.send_command(0, 0)
+        print('ir para rastrear parede')
 
         # transições 
         # rastrear_parede = True
