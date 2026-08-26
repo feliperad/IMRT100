@@ -141,7 +141,7 @@ while not motor_serial.shutdown_now:
         #     if turn_duration < execution_period:
         #         time.sleep(execution_period - turn_duration)
 
-        manobra(-100,100, 3.0)
+        manobra(-100,100, 1.5)
 
         motor_serial.send_command(0, 0)
 
