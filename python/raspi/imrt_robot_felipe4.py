@@ -236,7 +236,7 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        manobra(base_speed,base_speed, 3)
+        manobra(base_speed,base_speed, 2.5)
         
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
@@ -254,7 +254,7 @@ while not motor_serial.shutdown_now:
             dist_right = filter_right.update(raw_right)
             print(f'I am still in state 2 and dist right is {dist_right}')
 
-            if dist_right < 40:
+            if dist_right < 60:
                 print('going to state 0 - rastrear parede')
                 rastrear_parede = True
                 front_blocked = False
