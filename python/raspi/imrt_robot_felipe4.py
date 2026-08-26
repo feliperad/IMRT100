@@ -164,7 +164,7 @@ while not motor_serial.shutdown_now:
             uturn = False
             rastrear_parede = False
 
-        print(f'estou no estado rastrear parede e dist right = {dist_right}')
+        print(f'estou no estado rastrear parede e diff error = {diff_error}')
 
         if dist_right > max_threshold and dist_front>front_threshold and diff_error>100:
             print('going to state 2 - right turn')
