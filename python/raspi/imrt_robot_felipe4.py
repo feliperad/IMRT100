@@ -227,7 +227,7 @@ while not motor_serial.shutdown_now:
         if dist_right > 60:
             print('manobras adicionais')
             manobra(base_speed, -base_speed, 3.5)
-            manobra(base_speed, base_speed, 4)
+            manobra(base_speed, base_speed, 3)
 
         print('going to state 0 - rastrear parede')
         rastrear_parede = True
