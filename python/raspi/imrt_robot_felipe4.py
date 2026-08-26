@@ -11,7 +11,7 @@ td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
 base_speed = 65.0
-u_min, u_max = -50, 50
+u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
 max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
@@ -106,7 +106,16 @@ while not motor_serial.shutdown_now:
     if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
         front_blocked = True
 
-    # ------------------------------------------------------------- manobra
+    if front_blocked == False and dist_right <= max_threshold:
+        rastrear_parede = True
+
+    if dist_right > max_threshold:
+        rastrear_parede = False
+        uturn = True
+
+    #-----------------------------
+    # estado 1 - curva à esquerda
+    #-----------------------------
     if front_blocked:
         print('Obstacle ahead! Girando a esquerda...')
         int_error = 0.0
@@ -136,39 +145,55 @@ while not motor_serial.shutdown_now:
 
         motor_serial.send_command(0, 0)
         continue
+    #-----------------------------
 
-    # ------------------------------------------------------------- PID
-    error = max(error_min, min(error_max, dist_right - setpoint))
+    #-----------------------------
+    # estado 0: rastreando parede
+    #-----------------------------
+    if rastrear_parede:
+        error = max(error_min, min(error_max, dist_right - setpoint))
 
-    diff_error = (error - previous_error) / execution_period
+        diff_error = (error - previous_error) / execution_period
 
-    # Forma ISA: kp*(e + (1/ti)*integral + td*derivada)
-    u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
-    u_sat = max(-2 * base_speed, min(2 * base_speed, u))   # limita a curvatura
+        u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
+        u_sat = max(-2 * base_speed, min(2 * base_speed, u))
 
-    # Anti-windup: so integra quando a curvatura nao esta saturada.
-    # (Esta e a UNICA linha que mexe em int_error no ramo de controle.)
-    if u == u_sat:
-        int_error += error * execution_period
+        if u == u_sat:
+            int_error += error * execution_period
 
-    previous_error = error
+        previous_error = error
 
-    left = base_speed + u_sat / 2.0
-    right = base_speed - u_sat / 2.0
+        left = base_speed + u_sat / 2.0
+        right = base_speed - u_sat / 2.0
 
-    # Se estourou o limite do motor, escala o par mantendo o diferencial
-    peak = max(abs(left), abs(right))
-    if peak > u_max:
-        left *= u_max / peak
-        right *= u_max / peak
+        # Se estourou o limite do motor, escala o par mantendo o diferencial
+        peak = max(abs(left), abs(right))
+        if peak > u_max:
+            left *= u_max / peak
+            right *= u_max / peak
 
-    speed_motor_left, speed_motor_right = left, right
+        speed_motor_left, speed_motor_right = left, right
 
-    print(f"front: {dist_front:6.1f} | right: {dist_right:6.1f} | "
-          f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
-          f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
+        print(f"front: {dist_front:6.1f} | right: {dist_right:6.1f} | "
+            f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
+            f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
-    motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+        motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+    #-----------------------------
+
+    #---------------------------
+    # estado 2: curva à direita
+    #---------------------------
+    if uturn:
+        print('Curva à direita...')
+        int_error = 0.0
+        previous_error = 0.0
+
+        motor_serial.send_command(0, 0)
+
+
+
+
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
