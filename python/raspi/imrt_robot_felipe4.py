@@ -220,7 +220,7 @@ while not motor_serial.shutdown_now:
 
         manobra(base_speed,base_speed, 2.7)
         manobra(base_speed, -base_speed, 2.6)
-        manobra(base_speed, base_speed, 4)
+        manobra(base_speed, base_speed, 6)
 
         dist_front, dist_right, _ = acquire_signals()
 
