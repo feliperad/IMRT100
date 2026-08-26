@@ -206,6 +206,26 @@ while not motor_serial.shutdown_now:
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
         motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+
+        raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+        raw_right = conversao_raw_cm(motor_serial.get_dist_2())
+
+        dist_front = filter_front.update(raw_front)
+        dist_right = filter_right.update(raw_right)
+
+        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+            print('going to state 1 - front blocked (left turn)')
+            front_blocked = True
+            uturn = False
+            rastrear_parede = False
+
+        print(f'estou no estado rastrear parede e dist right = {dist_right}')
+
+        if dist_right > max_threshold and raw_front>front_threshold:
+            print('going to state 2 - right turn')
+            front_blocked = False
+            uturn = True
+            rastrear_parede = False
     #-----------------------------
 
     #---------------------------
