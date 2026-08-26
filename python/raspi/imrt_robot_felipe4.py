@@ -122,7 +122,7 @@ while not motor_serial.shutdown_now:
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
-            if dist_right < 1.1*setpoint:
+            if dist_right < 1.2*setpoint:
                 break
 
             turn_duration = time.time() - turn_start_time
