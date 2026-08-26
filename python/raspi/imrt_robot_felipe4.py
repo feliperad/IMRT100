@@ -6,41 +6,42 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 2.0
-ti = 3.0                      # segundos (nao 100!)
-ki = kp / ti
+ti = 3.0
+td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
-min_threshold = 10.0          # perto demais da parede
-median_threshold = 20.0       # limite superior da faixa boa
-max_threshold = 50.0          # acima disso: parede sumiu
-front_threshold = 5.0         # frente bloqueada
-
-setpoint = (min_threshold + median_threshold) / 2.0   # 15 cm
+setpoint = 15.0               # cm
 base_speed = 50.0
 u_min, u_max = -100.0, 100.0
-error_clamp = 20.0            # limita o erro em aberturas
+error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
+
+max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
+front_threshold = 25.0         # cm: frente bloqueada
+front_clear = 45.0   # cm: frente livre de novo (histerese)
+
+turn_speed = 60               # comando de giro; +-100 e rapido demais p/ 10 Hz
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
 
 # ---------------------------------------------------------------- sensores
-DIST_MIN = 1.0
-DIST_MAX = 255.0
+# Limites em CENTIMETROS: o filtro trabalha em cm, nao em unidades cruas.
+DIST_MIN = 2.0
+DIST_MAX = 400.0
 EMERGENCY_ON_RAW = True       # parada de emergencia usa leitura crua (sem lag)
 
-# ---------------------------------------------------------------- manobras
-# CALIBRAR NO ROBO, com a bateria no nivel que sera usado na prova
-T_90 = 0.90                   # s para girar 90 graus a +-50
-T_ADVANCE = 0.80              # s para o eixo passar a quina
-T_REACQ_MAX = 2.0             # desiste de reencontrar a parede depois disso
 
-RIGHT_OPEN = max_threshold - 5.0   # 45: parede sumiu
-RIGHT_SEEN = max_threshold - 15.0  # 35: parede reencontrada (histerese)
-OPEN_CONFIRM = 3                   # ciclos consecutivos para confirmar
-FRONT_CLEAR = 2.5 * front_threshold
+def conversao_raw_cm(raw):
+    """Converte a leitura crua para cm. Propaga None em vez de estourar."""
+    if raw is None:
+        return None
+    return (raw + 1.2814)* (398.0/255.0)
 
 
 class RangeFilter:
-    """Rejeicao de invalidos -> mediana (mata outlier) -> EMA (suaviza)."""
+    """Rejeicao de invalidos -> mediana (mata outlier) -> EMA (suaviza).
+
+    Recebe e devolve CENTIMETROS.
+    """
 
     def __init__(self, alpha=0.3, n=5):
         self.buf = deque(maxlen=n)
@@ -79,27 +80,15 @@ motor_serial.run()
 print("Entering loop. Ctrl+c to terminate")
 time.sleep(3)
 
-# ---------------------------------------------------------------- estado
-state = "FOLLOW"
-t_state = time.time()
-open_count = 0
 int_error = 0.0
-
-
-def set_state(s):
-    """Troca de estado zerando o integrador (a manobra invalida o historico)."""
-    global state, t_state, int_error
-    state = s
-    t_state = time.time()
-    int_error = 0.0
-    print(f">>> {s}")
-
+previous_error = 0.0
 
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
 
-    raw_front = motor_serial.get_dist_1()
-    raw_right = motor_serial.get_dist_2()
+    # Conversao acontece UMA VEZ, aqui. O filtro ja recebe cm.
+    raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+    raw_right = conversao_raw_cm(motor_serial.get_dist_2())
 
     dist_front = filter_front.update(raw_front)
     dist_right = filter_right.update(raw_right)
@@ -107,96 +96,70 @@ while not motor_serial.shutdown_now:
     # Ainda nao houve nenhuma leitura valida: fica parado em vez de estourar
     if dist_front is None or dist_right is None:
         print("Aguardando leitura valida... "
-              f"(cru: front={raw_front}, right={raw_right})")
+              f"(cm: front={raw_front}, right={raw_right})")
         motor_serial.send_command(0, 0)
         time.sleep(execution_period)
         continue
 
     # Parada de emergencia: leitura crua tem zero lag, o filtro atrasa a reacao
-    front_blocked = dist_front < front_threshold
-    if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front < front_threshold:
+    front_blocked = dist_front <= front_threshold
+    if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
         front_blocked = True
 
-    elapsed = time.time() - t_state
-    speed_motor_left = 0.0
-    speed_motor_right = 0.0
+    # ------------------------------------------------------------- manobra
+    if front_blocked:
+        print('Obstacle ahead! Girando a esquerda...')
+        int_error = 0.0
+        previous_error = 0.0
 
-    # ------------------------------------------------------------ FOLLOW
-    if state == "FOLLOW":
-        open_count = open_count + 1 if dist_right > RIGHT_OPEN else 0
+        while not motor_serial.shutdown_now:
+            turn_start_time = time.time()
 
-        if open_count >= OPEN_CONFIRM:
-            print('parede sumiu a direita!')
-            # frente ja bloqueada: nao da pra avancar, gira em cima da quina
-            set_state("ROTATE_RIGHT" if front_blocked else "ADVANCE")
-            open_count = 0
-            continue
+            dist_front = filter_front.update(conversao_raw_cm(motor_serial.get_dist_1()))
+            filter_right.update(conversao_raw_cm(motor_serial.get_dist_2()))
 
-        if front_blocked:
-            print('Obstacle ahead!')
-            set_state("ROTATE_LEFT")
-            continue
+            motor_serial.send_command(-turn_speed, turn_speed)
 
-        # diagnostico nas faixas antigas (nao controla mais nada)
-        if dist_right <= min_threshold:
-            print('too close to the wall!')
-        elif dist_right <= median_threshold:
-            print('correct distance!')
-        elif dist_right < max_threshold:
-            print('little deviation from the wall!')
-        else:
-            print('big deviation from the wall!')
+            # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
+            # trava o robo em quinas onde ela nunca reaparece perto.
+            if dist_front is not None and dist_front > front_clear:
+                break
 
-        # PI posicional com erro continuo + anti-windup por clamping
-        error = dist_right - setpoint
-        error = max(-error_clamp, min(error_clamp, error))
+            turn_duration = time.time() - turn_start_time
+            if turn_duration < execution_period:
+                time.sleep(execution_period - turn_duration)
 
-        u = base_speed + kp * error + ki * int_error
-        u_sat = max(u_min, min(u_max, u))
-        if u == u_sat:
-            int_error += error * execution_period
+        motor_serial.send_command(0, 0)
+        continue
 
-        speed_motor_left = u_sat
-        speed_motor_right = base_speed
+    # ------------------------------------------------------------- PID
+    error = max(error_min, min(error_max, dist_right - setpoint))
+    diff_error = (error - previous_error) / execution_period
 
-    # ------------------------------------------------------------ ADVANCE
-    elif state == "ADVANCE":
-        # anda reto para o eixo do robo passar a quina antes de girar
-        speed_motor_left = base_speed
-        speed_motor_right = base_speed
-        if front_blocked or elapsed > T_ADVANCE:
-            set_state("ROTATE_RIGHT")
-            continue
+    # Forma ISA: kp*(e + (1/ti)*integral + td*derivada)
+    u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
+    u_sat = max(-2 * base_speed, min(2 * base_speed, u))   # limita a curvatura
 
-    # ------------------------------------------------------- ROTATE_RIGHT
-    elif state == "ROTATE_RIGHT":
-        speed_motor_left = 50
-        speed_motor_right = -50
-        if elapsed > T_90:
-            set_state("REACQUIRE")
-            continue
+    # Anti-windup: so integra quando a curvatura nao esta saturada.
+    # (Esta e a UNICA linha que mexe em int_error no ramo de controle.)
+    if u == u_sat:
+        int_error += error * execution_period
 
-    # -------------------------------------------------------- ROTATE_LEFT
-    elif state == "ROTATE_LEFT":
-        speed_motor_left = -50
-        speed_motor_right = 50
-        if elapsed > T_90:
-            # volta para FOLLOW: se ainda estiver bloqueado, gira de novo.
-            # Dois giros seguidos = o 180 do beco sem saida, de graca.
-            set_state("FOLLOW")
-            continue
+    previous_error = error
 
-    # ---------------------------------------------------------- REACQUIRE
-    elif state == "REACQUIRE":
-        # anda reto ate reencontrar a parede no corredor novo
-        speed_motor_left = base_speed
-        speed_motor_right = base_speed
-        if dist_right < RIGHT_SEEN or front_blocked or elapsed > T_REACQ_MAX:
-            set_state("FOLLOW")
-            continue
+    left = base_speed + u_sat / 2.0
+    right = base_speed - u_sat / 2.0
 
-    print(f"[{state}] front: {raw_front} -> {dist_front:6.1f} | "
-          f"right: {raw_right} -> {dist_right:6.1f} | "
+    # Se estourou o limite do motor, escala o par mantendo o diferencial
+    peak = max(abs(left), abs(right))
+    if peak > u_max:
+        left *= u_max / peak
+        right *= u_max / peak
+
+    speed_motor_left, speed_motor_right = left, right
+
+    print(f"front: {dist_front:6.1f} | right: {dist_right:6.1f} | "
+          f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
           f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
     motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
