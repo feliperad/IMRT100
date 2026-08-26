@@ -128,18 +128,20 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        while not motor_serial.shutdown_now:
-            turn_start_time = time.time()
+        # while not motor_serial.shutdown_now:
+        #     turn_start_time = time.time()
 
-            dist_front, dist_right, _ = acquire_signals()
-            motor_serial.send_command(-turn_speed, turn_speed)
+        #     dist_front, dist_right, _ = acquire_signals()
+        #     motor_serial.send_command(-turn_speed, turn_speed)
 
-            if dist_front > front_clear and dist_right < 1.2*setpoint:
-                break
+        #     if dist_front > front_clear and dist_right < 1.2*setpoint:
+        #         break
 
-            turn_duration = time.time() - turn_start_time
-            if turn_duration < execution_period:
-                time.sleep(execution_period - turn_duration)
+        #     turn_duration = time.time() - turn_start_time
+        #     if turn_duration < execution_period:
+        #         time.sleep(execution_period - turn_duration)
+
+        manobra(-100,100, 3.0)
 
         motor_serial.send_command(0, 0)
 
