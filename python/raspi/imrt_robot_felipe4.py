@@ -170,7 +170,7 @@ while not motor_serial.shutdown_now:
         else:
             open_count = 0
 
-        if open_count >= 10 and dist_front > front_threshold:
+        if open_count >= 15 and dist_front > front_threshold:
             open_count = 0
             print('going to state 2 - right turn')
             front_blocked = False
