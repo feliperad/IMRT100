@@ -9,7 +9,7 @@ kp = 3.0
 ti = 1e9
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
-setpoint = 15.0               # cm
+setpoint = 20.0               # cm
 base_speed = 50.0
 u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
@@ -166,7 +166,7 @@ while not motor_serial.shutdown_now:
           f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
           f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
-    #motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+    motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
