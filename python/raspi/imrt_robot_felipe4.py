@@ -128,20 +128,20 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        # while not motor_serial.shutdown_now:
-        #     turn_start_time = time.time()
+        while not motor_serial.shutdown_now:
+            turn_start_time = time.time()
 
-        #     dist_front, dist_right, _ = acquire_signals()
-        #     motor_serial.send_command(-turn_speed, turn_speed)
+            dist_front, dist_right, _ = acquire_signals()
+            motor_serial.send_command(-turn_speed, turn_speed)
 
-        #     if dist_front > front_clear and dist_right < 1.2*setpoint:
-        #         break
+            if dist_front > front_clear and dist_right < 1.2*setpoint:
+                break
 
-        #     turn_duration = time.time() - turn_start_time
-        #     if turn_duration < execution_period:
-        #         time.sleep(execution_period - turn_duration)
+            turn_duration = time.time() - turn_start_time
+            if turn_duration < execution_period:
+                time.sleep(execution_period - turn_duration)
 
-        manobra(-100,100, 1.7)
+        #manobra(-100,100, 1.7)
 
         motor_serial.send_command(0, 0)
 
@@ -174,6 +174,10 @@ while not motor_serial.shutdown_now:
 
         error = max(error_min, min(error_max, dist_right - setpoint))
         diff_error = (error - previous_error) / execution_period
+
+        if diff_error>30:
+            print('tentar aqui?????')
+
         u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
         u_sat = max(-2 * base_speed, min(2 * base_speed, u))
 
