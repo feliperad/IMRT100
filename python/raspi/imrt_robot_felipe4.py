@@ -110,7 +110,7 @@ front_blocked = False
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
 
-    dist_front, dist_right = acquire_signals()
+    dist_front, dist_right, _ = acquire_signals()
 
     # Ainda nao houve nenhuma leitura valida: fica parado em vez de estourar
     if dist_front is None or dist_right is None:
@@ -131,7 +131,7 @@ while not motor_serial.shutdown_now:
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
 
-            dist_front, dist_right = acquire_signals()
+            dist_front, dist_right, _ = acquire_signals()
             motor_serial.send_command(-turn_speed, turn_speed)
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
@@ -212,7 +212,7 @@ while not motor_serial.shutdown_now:
         manobra(base_speed, -base_speed, 2.6)
         manobra(base_speed, base_speed, 6)
 
-        dist_front, dist_right = acquire_signals()
+        dist_front, dist_right, _ = acquire_signals()
 
         if dist_right > 60:
             print('manobras adicionais')
