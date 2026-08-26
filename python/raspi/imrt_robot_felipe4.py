@@ -78,7 +78,7 @@ def acquire_signals():
     dist_front = filter_front.update(raw_front)
     dist_right = filter_right.update(raw_right)
 
-    return dist_front, dist_right
+    return dist_front, dist_right, raw_front
 
 
 def is_valid(d):
@@ -115,7 +115,7 @@ while not motor_serial.shutdown_now:
     # Ainda nao houve nenhuma leitura valida: fica parado em vez de estourar
     if dist_front is None or dist_right is None:
         print("Aguardando leitura valida... "
-              f"(cm: front={raw_front}, right={raw_right})")
+              f"(cm: front={dist_front}, right={dist_right})")
         motor_serial.send_command(0, 0)
         time.sleep(execution_period)
         continue
@@ -156,7 +156,7 @@ while not motor_serial.shutdown_now:
     # estado 0: rastreando parede
     #-----------------------------
     if rastrear_parede:
-        dist_front, dist_right = acquire_signals()
+        dist_front, dist_right, raw_front = acquire_signals()
 
         if dist_front <= front_threshold:
             print('going to state 1 - front blocked (left turn)')
@@ -224,11 +224,6 @@ while not motor_serial.shutdown_now:
         front_blocked = False
         uturn = False
                 
-
- 
-
-            
-
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
     if iteration_duration < execution_period:
