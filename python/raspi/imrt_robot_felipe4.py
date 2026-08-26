@@ -5,7 +5,7 @@ from collections import deque
 from statistics import median
 
 # ---------------------------------------------------------------- controle
-kp = 3.0
+kp = 5.0
 ti = 10
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
