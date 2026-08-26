@@ -82,6 +82,7 @@ time.sleep(3)
 
 int_error = 0.0
 previous_error = 0.0
+rastrear_parede = True
 
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
