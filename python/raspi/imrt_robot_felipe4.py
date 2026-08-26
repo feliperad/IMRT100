@@ -195,6 +195,9 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
+        motor_serial.send_command(int(base_speed), int(base_speed))
+        time.sleep(4)
+
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
 
@@ -203,11 +206,11 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            motor_serial.send_command(int(base_speed), int(base_speed))
-            time.sleep(2)
-
             motor_serial.send_command(int(base_speed), int(-base_speed))
-            time.sleep(2)
+            time.sleep(4)
+
+            motor_serial.send_command(int(base_speed), int(base_speed))
+            time.sleep(4)
 
             if dist_right < 1.2*setpoint:
                 break
