@@ -223,9 +223,10 @@ while not motor_serial.shutdown_now:
             raw_right = conversao_raw_cm(motor_serial.get_dist_2())
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
+            print(f'I am still in state 2 and dist right is {dist_right}')
 
 
-            if dist_right < 1.2*setpoint:
+            if dist_right < 1.3*setpoint:
                 print('going to state 0 - rastrear parede')
                 rastrear_parede = True
                 front_blocked = False
