@@ -135,7 +135,7 @@ while not motor_serial.shutdown_now:
     # ------------------------------------------------------------- PID
     error = max(error_min, min(error_max, dist_right - setpoint))
 
-    if -1.05*setpoint <= error <= 1.05*setpoint:
+    if -0.5 <= error <= 0.5:
         error = 0
 
     diff_error = (error - previous_error) / execution_period
