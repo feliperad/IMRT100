@@ -63,7 +63,6 @@ class RangeFilter:
 def is_valid(d):
     return d is not None and DIST_MIN < d < DIST_MAX
 
-
 filter_front = RangeFilter(alpha=0.5, n=3)   # rapido: sensor de seguranca
 filter_right = RangeFilter(alpha=0.3, n=5)   # suave: parede muda devagar
 
@@ -83,14 +82,15 @@ time.sleep(3)
 int_error = 0.0
 previous_error = 0.0
 rastrear_parede = True
+uturn = False
+front_blocked = False
 
+# ----------------------------------------------- início do loop
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
 
-    # Conversao acontece UMA VEZ, aqui. O filtro ja recebe cm.
     raw_front = conversao_raw_cm(motor_serial.get_dist_1())
     raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-
     dist_front = filter_front.update(raw_front)
     dist_right = filter_right.update(raw_right)
 
@@ -101,23 +101,6 @@ while not motor_serial.shutdown_now:
         motor_serial.send_command(0, 0)
         time.sleep(execution_period)
         continue
-
-    # Parada de emergencia: leitura crua tem zero lag, o filtro atrasa a reacao
-    front_blocked = dist_front <= front_threshold
-    if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
-        front_blocked = True
-        uturn = False
-        rastrear_parede = False
-
-    if front_blocked == False and dist_right <= max_threshold:
-        front_blocked = True
-        uturn = False
-        rastrear_parede = True
-
-    if dist_right > max_threshold:
-        front_blocked = True
-        uturn = True
-        rastrear_parede = False
 
     #-----------------------------
     # estado 1 - curva à esquerda
@@ -150,7 +133,11 @@ while not motor_serial.shutdown_now:
                 time.sleep(execution_period - turn_duration)
 
         motor_serial.send_command(0, 0)
-        continue
+
+        # transições 
+        rastrear_parede = True
+        front_blocked = False
+        uturn = False
     #-----------------------------
 
     #-----------------------------
@@ -185,6 +172,16 @@ while not motor_serial.shutdown_now:
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
         motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+
+        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+            front_blocked = True
+            uturn = False
+            rastrear_parede = False
+
+        if dist_right > max_threshold:
+            front_blocked = False
+            uturn = True
+            rastrear_parede = False
     #-----------------------------
 
     #---------------------------
