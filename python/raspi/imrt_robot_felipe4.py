@@ -6,11 +6,12 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 3.0
-ti = 300
+ti = 400
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
 base_speed = 65.0
+base_speed_pid = 100
 u_min, u_max = -100.0, 100.0
 error_min, error_max = -20.0, 20.0    # clamp assimetrico do erro
 
@@ -187,8 +188,8 @@ while not motor_serial.shutdown_now:
 
         previous_error = error
 
-        left = base_speed + u_sat / 2.0
-        right = base_speed - u_sat / 2.0
+        left = base_speed_pid + u_sat / 2.0
+        right = base_speed_pid - u_sat / 2.0
 
         # Se estourou o limite do motor, escala o par mantendo o diferencial
         peak = max(abs(left), abs(right))
