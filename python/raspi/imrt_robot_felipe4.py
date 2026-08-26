@@ -115,8 +115,13 @@ while not motor_serial.shutdown_now:
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
 
-            dist_front = filter_front.update(conversao_raw_cm(motor_serial.get_dist_1()))
-            filter_right.update(conversao_raw_cm(motor_serial.get_dist_2()))
+            raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+            raw_right = conversao_raw_cm(motor_serial.get_dist_2())
+
+            dist_front = filter_front.update(raw_front)
+            dist_right = filter_right.update(raw_right)
+
+            print(f'dist right = {dist_right}')
 
             motor_serial.send_command(-turn_speed, turn_speed)
 
