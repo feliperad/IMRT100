@@ -166,7 +166,7 @@ while not motor_serial.shutdown_now:
 
         print(f'estou no estado rastrear parede e dist right = {dist_right}')
 
-        if dist_right > max_threshold and dist_front>front_threshold:
+        if dist_right > max_threshold and dist_front>front_threshold and diff_error>50:
             print('going to state 2 - right turn')
             front_blocked = False
             uturn = True
@@ -174,9 +174,6 @@ while not motor_serial.shutdown_now:
 
         error = max(error_min, min(error_max, dist_right - setpoint))
         diff_error = (error - previous_error) / execution_period
-
-        if diff_error>30:
-            print('tentar aqui?????')
 
         u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
         u_sat = max(-2 * base_speed, min(2 * base_speed, u))
