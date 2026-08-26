@@ -203,10 +203,10 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            motor_serial.send_command(base_speed, base_speed)
+            motor_serial.send_command(int(base_speed), int(base_speed))
             time.sleep(2)
 
-            motor_serial.send_command(base_speed, -base_speed)
+            motor_serial.send_command(int(base_speed), int(-base_speed))
             time.sleep(2)
 
             if dist_right < 1.2*setpoint:
