@@ -6,7 +6,7 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 3.0
-ti = 500
+ti = 300
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
@@ -249,7 +249,7 @@ while not motor_serial.shutdown_now:
                 rastrear_parede = False
                 break
 
-            manobra(base_speed, base_speed, 4)
+            manobra(base_speed, base_speed, 5)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
