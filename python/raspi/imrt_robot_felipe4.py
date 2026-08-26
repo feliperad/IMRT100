@@ -105,6 +105,7 @@ previous_error = 0.0
 rastrear_parede = True
 uturn = False
 front_blocked = False
+setar = False
 
 # ----------------------------------------------- início do loop
 while not motor_serial.shutdown_now:
@@ -164,14 +165,17 @@ while not motor_serial.shutdown_now:
             uturn = False
             rastrear_parede = False
 
-        if dist_right > max_threshold and diff_error>150:#dist_front>front_threshold and diff_error>100:
+        if dist_right > max_threshold and dist_front>front_threshold and setar:
             print('going to state 2 - right turn')
+            setar = False
             front_blocked = False
             uturn = True
             rastrear_parede = False
 
         error = max(error_min, min(error_max, dist_right - setpoint))
         diff_error = (error - previous_error) / execution_period
+        if diff_error > 150:
+            setar = True
 
         print(f'estou no estado rastrear parede e diff error = {diff_error}')
 
