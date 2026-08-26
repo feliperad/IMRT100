@@ -249,7 +249,7 @@ while not motor_serial.shutdown_now:
                 rastrear_parede = False
                 break
 
-            manobra(base_speed, base_speed, 5)
+            manobra(base_speed, base_speed, 6)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
