@@ -18,7 +18,7 @@ max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
 front_threshold = 25.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
-turn_speed = 60               # comando de giro; +-100 e rapido demais p/ 10 Hz
+turn_speed = 100
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
@@ -122,7 +122,7 @@ while not motor_serial.shutdown_now:
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
-            if dist_front is not None and dist_front > front_clear:
+            if dist_right < 40:
                 break
 
             turn_duration = time.time() - turn_start_time
@@ -134,9 +134,6 @@ while not motor_serial.shutdown_now:
 
     # ------------------------------------------------------------- PID
     error = max(error_min, min(error_max, dist_right - setpoint))
-
-    if -0.5 <= error <= 0.5:
-        error = 0
 
     diff_error = (error - previous_error) / execution_period
 
