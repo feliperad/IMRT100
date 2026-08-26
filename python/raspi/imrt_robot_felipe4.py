@@ -14,7 +14,7 @@ base_speed = 65.0
 u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
-max_threshold = 100          # cm: acima disso a parede sumiu (nao usado ainda)
+max_threshold = 120          # cm: acima disso a parede sumiu (nao usado ainda)
 front_threshold = 10.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
