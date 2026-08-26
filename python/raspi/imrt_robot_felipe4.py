@@ -18,7 +18,7 @@ max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
 front_threshold = 10.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
-turn_speed = 100
+turn_speed = 80
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
