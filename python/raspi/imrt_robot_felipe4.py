@@ -235,7 +235,7 @@ while not motor_serial.shutdown_now:
             print(f'I am still in state 2 and dist right is {dist_right}')
 
 
-            if dist_right < 1.3*setpoint:
+            if dist_right < 40:
                 print('going to state 0 - rastrear parede')
                 rastrear_parede = True
                 front_blocked = False
