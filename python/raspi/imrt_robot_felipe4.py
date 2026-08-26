@@ -236,7 +236,7 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        manobra(base_speed,base_speed, 4)
+        manobra(base_speed,base_speed, 3)
         
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
