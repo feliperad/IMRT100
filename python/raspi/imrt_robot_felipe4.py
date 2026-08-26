@@ -158,7 +158,7 @@ while not motor_serial.shutdown_now:
     if rastrear_parede:
         dist_front, dist_right = acquire_signals()
 
-        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+        if dist_front <= front_threshold:
             print('going to state 1 - front blocked (left turn)')
             front_blocked = True
             uturn = False
@@ -166,7 +166,7 @@ while not motor_serial.shutdown_now:
 
         print(f'estou no estado rastrear parede e dist right = {dist_right}')
 
-        if dist_right > max_threshold and raw_front>front_threshold:
+        if dist_right > max_threshold and dist_front>front_threshold:
             print('going to state 2 - right turn')
             front_blocked = False
             uturn = True
@@ -211,6 +211,8 @@ while not motor_serial.shutdown_now:
         manobra(base_speed,base_speed, 2.7)
         manobra(base_speed, -base_speed, 2.6)
         manobra(base_speed, base_speed, 6)
+
+        dist_front, dist_right = acquire_signals()
 
         if dist_right > 60:
             print('manobras adicionais')
