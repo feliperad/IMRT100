@@ -133,7 +133,7 @@ while not motor_serial.shutdown_now:
 
             #print(f'dist right = {dist_right}')
 
-            motor_serial.send_command(-turn_speed, turn_speed)
+            #motor_serial.send_command(-turn_speed, turn_speed)
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
