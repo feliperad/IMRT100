@@ -5,13 +5,12 @@ from collections import deque
 from statistics import median
 
 # ---------------------------------------------------------------- controle
-kp = 5.0
-ti = 10
+kp = 2.0
+ti = 300
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
 base_speed = 65.0
-base_speed_pid = 100
 u_min, u_max = -100.0, 100.0
 error_min, error_max = -20.0, 20.0    # clamp assimetrico do erro
 
@@ -106,7 +105,7 @@ previous_error = 0.0
 rastrear_parede = True
 uturn = False
 front_blocked = False
-setar = False
+open_count = 0
 
 # ----------------------------------------------- início do loop
 while not motor_serial.shutdown_now:
@@ -166,9 +165,14 @@ while not motor_serial.shutdown_now:
             uturn = False
             rastrear_parede = False
 
-        if dist_right > max_threshold and dist_front>front_threshold and setar:
+        if dist_right > max_threshold:
+            open_count += 1
+        else:
+            open_count = 0
+
+        if open_count >= 3 and dist_front > front_threshold:
+            open_count = 0
             print('going to state 2 - right turn')
-            setar = False
             front_blocked = False
             uturn = True
             rastrear_parede = False
@@ -188,8 +192,8 @@ while not motor_serial.shutdown_now:
 
         previous_error = error
 
-        left = base_speed_pid + u_sat / 2.0
-        right = base_speed_pid - u_sat / 2.0
+        left = base_speed + u_sat / 2.0
+        right = base_speed - u_sat / 2.0
 
         # Se estourou o limite do motor, escala o par mantendo o diferencial
         peak = max(abs(left), abs(right))
