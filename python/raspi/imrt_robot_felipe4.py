@@ -217,11 +217,12 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            manobra(base_speed, -base_speed, 4)
-            #manobra(base_speed, base_speed, 4)
-
+            manobra(base_speed, -base_speed, 2)
             if dist_right < 1.2*setpoint:
                 break
+            manobra(base_speed, base_speed, 2)
+
+            
 
         # transições
         print('going to state 0 - rastrear parede')
