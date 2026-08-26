@@ -135,9 +135,9 @@ while not motor_serial.shutdown_now:
         motor_serial.send_command(0, 0)
 
         # transições 
-        rastrear_parede = True
-        front_blocked = False
-        uturn = False
+        # rastrear_parede = True
+        # front_blocked = False
+        # uturn = False
     #-----------------------------
 
     #-----------------------------
