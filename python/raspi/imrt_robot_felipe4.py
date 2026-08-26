@@ -205,7 +205,7 @@ while not motor_serial.shutdown_now:
             f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
-        #motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+        motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
     #-----------------------------
 
     #---------------------------
