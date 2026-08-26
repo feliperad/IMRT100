@@ -72,6 +72,15 @@ class RangeFilter:
         return self.y
 
 
+def acquire_signals():
+    raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+    raw_right = conversao_raw_cm(motor_serial.get_dist_2())
+    dist_front = filter_front.update(raw_front)
+    dist_right = filter_right.update(raw_right)
+
+    return dist_front, dist_right
+
+
 def is_valid(d):
     return d is not None and DIST_MIN < d < DIST_MAX
 
@@ -101,10 +110,7 @@ front_blocked = False
 while not motor_serial.shutdown_now:
     iteration_start_time = time.time()
 
-    raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-    raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-    dist_front = filter_front.update(raw_front)
-    dist_right = filter_right.update(raw_right)
+    dist_front, dist_right = acquire_signals()
 
     # Ainda nao houve nenhuma leitura valida: fica parado em vez de estourar
     if dist_front is None or dist_right is None:
@@ -125,14 +131,7 @@ while not motor_serial.shutdown_now:
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
 
-            raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-            raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-
-            dist_front = filter_front.update(raw_front)
-            dist_right = filter_right.update(raw_right)
-
-            #print(f'dist right = {dist_right}')
-
+            dist_front, dist_right = acquire_signals()
             motor_serial.send_command(-turn_speed, turn_speed)
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
@@ -157,11 +156,7 @@ while not motor_serial.shutdown_now:
     # estado 0: rastreando parede
     #-----------------------------
     if rastrear_parede:
-        raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-        raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-
-        dist_front = filter_front.update(raw_front)
-        dist_right = filter_right.update(raw_right)
+        dist_front, dist_right = acquire_signals()
 
         if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
             print('going to state 1 - front blocked (left turn)')
@@ -177,11 +172,8 @@ while not motor_serial.shutdown_now:
             uturn = True
             rastrear_parede = False
 
-
         error = max(error_min, min(error_max, dist_right - setpoint))
-
         diff_error = (error - previous_error) / execution_period
-
         u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
         u_sat = max(-2 * base_speed, min(2 * base_speed, u))
 
@@ -206,26 +198,6 @@ while not motor_serial.shutdown_now:
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
         motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
-
-        raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-        raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-
-        dist_front = filter_front.update(raw_front)
-        dist_right = filter_right.update(raw_right)
-
-        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
-            print('going to state 1 - front blocked (left turn)')
-            front_blocked = True
-            uturn = False
-            rastrear_parede = False
-
-        print(f'estou no estado rastrear parede e dist right = {dist_right}')
-
-        if dist_right > max_threshold and raw_front>front_threshold:
-            print('going to state 2 - right turn')
-            front_blocked = False
-            uturn = True
-            rastrear_parede = False
     #-----------------------------
 
     #---------------------------
@@ -237,38 +209,22 @@ while not motor_serial.shutdown_now:
         previous_error = 0.0
 
         manobra(base_speed,base_speed, 2.7)
-        
-        while not motor_serial.shutdown_now:
-            turn_start_time = time.time()
+        manobra(base_speed, -base_speed, 2.6)
+        manobra(base_speed, base_speed, 6)
 
-            raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-            raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-            dist_front = filter_front.update(raw_front)
-            dist_right = filter_right.update(raw_right)
-
+        if dist_right > 60:
+            print('manobras adicionais')
             manobra(base_speed, -base_speed, 2.6)
-
-            raw_front = conversao_raw_cm(motor_serial.get_dist_1())
-            raw_right = conversao_raw_cm(motor_serial.get_dist_2())
-            dist_front = filter_front.update(raw_front)
-            dist_right = filter_right.update(raw_right)
-            print(f'I am still in state 2 and dist right is {dist_right}')
-
-            if dist_right < 60:
-                print('going to state 0 - rastrear parede')
-                rastrear_parede = True
-                front_blocked = False
-                uturn = False
-                break
-
-            if is_valid(raw_front) and dist_front <= front_threshold:
-                print('going to state 1 - front blocked (left turn)')
-                front_blocked = True
-                uturn = False
-                rastrear_parede = False
-                break
-
             manobra(base_speed, base_speed, 6)
+            print('going to state 0 - rastrear parede')
+            rastrear_parede = True
+            front_blocked = False
+            uturn = False
+                
+
+ 
+
+            
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
