@@ -6,7 +6,7 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 3.0
-ti = 1e9
+ti = 100
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
@@ -15,7 +15,7 @@ u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
 max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
-front_threshold = 25.0         # cm: frente bloqueada
+front_threshold = 10.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
 turn_speed = 100
@@ -122,7 +122,7 @@ while not motor_serial.shutdown_now:
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
-            if dist_right < 40:
+            if dist_right < 1.1*setpoint:
                 break
 
             turn_duration = time.time() - turn_start_time
