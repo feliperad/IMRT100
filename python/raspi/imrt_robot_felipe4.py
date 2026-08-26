@@ -15,7 +15,7 @@ u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
 max_threshold = 150          # cm: acima disso a parede sumiu (nao usado ainda)
-front_threshold = 10.0         # cm: frente bloqueada
+front_threshold = 12.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
 turn_speed = 80
@@ -134,7 +134,7 @@ while not motor_serial.shutdown_now:
             dist_front, dist_right, _ = acquire_signals()
             motor_serial.send_command(-turn_speed, turn_speed)
 
-            if dist_front > front_clear: #and dist_right < 1.2*setpoint:
+            if dist_front > front_clear and dist_right < 1.2*setpoint:
                 break
 
             turn_duration = time.time() - turn_start_time
