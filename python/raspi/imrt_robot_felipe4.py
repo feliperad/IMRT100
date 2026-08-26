@@ -14,7 +14,7 @@ base_speed = 65.0
 u_min, u_max = -100.0, 100.0
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
-max_threshold = 60.0          # cm: acima disso a parede sumiu (nao usado ainda)
+max_threshold = 200          # cm: acima disso a parede sumiu (nao usado ainda)
 front_threshold = 10.0         # cm: frente bloqueada
 front_clear = 45.0   # cm: frente livre de novo (histerese)
 
@@ -163,6 +163,20 @@ while not motor_serial.shutdown_now:
         dist_front = filter_front.update(raw_front)
         dist_right = filter_right.update(raw_right)
 
+        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+            print('going to state 1 - front blocked (left turn)')
+            front_blocked = True
+            uturn = False
+            rastrear_parede = False
+
+        print(f'estou no estado rastrear parede e dist right = {dist_right}')
+
+        if dist_right > max_threshold:
+            print('going to state 2 - right turn')
+            front_blocked = False
+            uturn = True
+            rastrear_parede = False
+
 
         error = max(error_min, min(error_max, dist_right - setpoint))
 
@@ -192,20 +206,6 @@ while not motor_serial.shutdown_now:
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
         motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
-
-        if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
-            print('going to state 1 - front blocked (left turn)')
-            front_blocked = True
-            uturn = False
-            rastrear_parede = False
-
-        print(f'estou no estado rastrear parede e dist right = {dist_right}')
-
-        if dist_right > max_threshold:
-            print('going to state 2 - right turn')
-            front_blocked = False
-            uturn = True
-            rastrear_parede = False
     #-----------------------------
 
     #---------------------------
