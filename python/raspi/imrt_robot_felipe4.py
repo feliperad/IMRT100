@@ -11,7 +11,7 @@ td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
 base_speed = 65.0
-u_min, u_max = -100.0, 100.0
+u_min, u_max = -50, 50
 error_min, error_max = -10.0, 20.0    # clamp assimetrico do erro
 
 max_threshold = 50.0          # cm: acima disso a parede sumiu (nao usado ainda)
