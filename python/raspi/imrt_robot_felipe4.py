@@ -6,7 +6,7 @@ from statistics import median
 
 # ---------------------------------------------------------------- controle
 kp = 3.0
-ti = 600
+ti = 500
 td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
@@ -119,7 +119,7 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            print(f'dist right = {dist_right}')
+            #print(f'dist right = {dist_right}')
 
             motor_serial.send_command(-turn_speed, turn_speed)
 
@@ -135,7 +135,7 @@ while not motor_serial.shutdown_now:
         motor_serial.send_command(0, 0)
 
         # transições
-        print('') 
+        print('going to state 0 - rastrear parede')
         rastrear_parede = True
         front_blocked = False
         uturn = False
@@ -175,11 +175,13 @@ while not motor_serial.shutdown_now:
         motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
 
         if EMERGENCY_ON_RAW and is_valid(raw_front) and raw_front <= front_threshold:
+            print('going to state 1 - front blocked (left turn)')
             front_blocked = True
             uturn = False
             rastrear_parede = False
 
         if dist_right > max_threshold:
+            print('going to state 2 - right turn')
             front_blocked = False
             uturn = True
             rastrear_parede = False
@@ -193,11 +195,28 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        motor_serial.send_command(0, 0)
+        while not motor_serial.shutdown_now:
+            turn_start_time = time.time()
 
+            raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+            raw_right = conversao_raw_cm(motor_serial.get_dist_2())
+            dist_front = filter_front.update(raw_front)
+            dist_right = filter_right.update(raw_right)
 
+            motor_serial.send_command(base_speed, base_speed)
+            time.sleep(2)
 
+            motor_serial.send_command(base_speed, -base_speed)
+            time.sleep(2)
 
+            if dist_right < 1.2*setpoint:
+                break
+
+        # transições
+        print('going to state 0 - rastrear parede')
+        rastrear_parede = True
+        front_blocked = False
+        uturn = False
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
