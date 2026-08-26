@@ -133,7 +133,7 @@ while not motor_serial.shutdown_now:
 
             #print(f'dist right = {dist_right}')
 
-            #motor_serial.send_command(-turn_speed, turn_speed)
+            motor_serial.send_command(-turn_speed, turn_speed)
 
             # Sai pela FRENTE LIVRE apenas. Exigir tambem parede a direita
             # trava o robo em quinas onde ela nunca reaparece perto.
@@ -205,7 +205,7 @@ while not motor_serial.shutdown_now:
             f"e={error:6.2f} i={int_error:7.2f} u={u_sat:7.2f} | "
             f"cmd: {speed_motor_left:6.1f} {speed_motor_right:6.1f}")
 
-        #motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
+        motor_serial.send_command(int(speed_motor_left), int(speed_motor_right))
 
         raw_front = conversao_raw_cm(motor_serial.get_dist_1())
         raw_right = conversao_raw_cm(motor_serial.get_dist_2())
@@ -236,7 +236,7 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        #manobra(base_speed,base_speed, 4)
+        manobra(base_speed,base_speed, 4)
         
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
@@ -246,7 +246,7 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            #manobra(base_speed, -base_speed, 2.6)
+            manobra(base_speed, -base_speed, 2.6)
 
             raw_front = conversao_raw_cm(motor_serial.get_dist_1())
             raw_right = conversao_raw_cm(motor_serial.get_dist_2())
@@ -268,7 +268,7 @@ while not motor_serial.shutdown_now:
                 rastrear_parede = False
                 break
 
-            #manobra(base_speed, base_speed, 6)
+            manobra(base_speed, base_speed, 6)
 
     iteration_end_time = time.time()
     iteration_duration = iteration_end_time - iteration_start_time
