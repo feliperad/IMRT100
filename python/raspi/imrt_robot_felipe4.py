@@ -157,6 +157,13 @@ while not motor_serial.shutdown_now:
     # estado 0: rastreando parede
     #-----------------------------
     if rastrear_parede:
+        raw_front = conversao_raw_cm(motor_serial.get_dist_1())
+        raw_right = conversao_raw_cm(motor_serial.get_dist_2())
+
+        dist_front = filter_front.update(raw_front)
+        dist_right = filter_right.update(raw_right)
+
+
         error = max(error_min, min(error_max, dist_right - setpoint))
 
         diff_error = (error - previous_error) / execution_period
