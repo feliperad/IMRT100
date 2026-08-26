@@ -36,6 +36,18 @@ def conversao_raw_cm(raw):
         return None
     return (raw + 1.2814)* (398.0/255.0)
 
+def manobra(left, right, duracao):
+    """Mantem o comando ativo por 'duracao' segundos, alimentando os filtros."""
+    t0 = time.time()
+    while not motor_serial.shutdown_now and (time.time() - t0) < duracao:
+        t = time.time()
+        filter_front.update(conversao_raw_cm(motor_serial.get_dist_1()))
+        filter_right.update(conversao_raw_cm(motor_serial.get_dist_2()))
+        motor_serial.send_command(int(left), int(right))
+        dt = time.time() - t
+        if dt < execution_period:
+            time.sleep(execution_period - dt)
+
 
 class RangeFilter:
     """Rejeicao de invalidos -> mediana (mata outlier) -> EMA (suaviza).
@@ -195,9 +207,8 @@ while not motor_serial.shutdown_now:
         int_error = 0.0
         previous_error = 0.0
 
-        motor_serial.send_command(int(base_speed), int(base_speed))
-        time.sleep(4)
-
+        manobra(base_speed,base_speed, 2)
+        
         while not motor_serial.shutdown_now:
             turn_start_time = time.time()
 
@@ -206,11 +217,8 @@ while not motor_serial.shutdown_now:
             dist_front = filter_front.update(raw_front)
             dist_right = filter_right.update(raw_right)
 
-            motor_serial.send_command(int(base_speed), int(-base_speed))
-            time.sleep(4)
-
-            motor_serial.send_command(int(base_speed), int(base_speed))
-            time.sleep(4)
+            manobra(base_speed, -base_speed, 4)
+            #manobra(base_speed, base_speed, 4)
 
             if dist_right < 1.2*setpoint:
                 break
