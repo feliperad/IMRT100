@@ -5,9 +5,9 @@ from collections import deque
 from statistics import median
 
 # ---------------------------------------------------------------- controle
-kp = 2.0
+kp = 4.0
 ti = 200
-td = 0.0                      # deixe em 0 ate o robo andar reto; ver notas
+td = 0.15                      # deixe em 0 ate o robo andar reto; ver notas
 
 setpoint = 20.0               # cm
 base_speed = 65.0
@@ -185,7 +185,8 @@ while not motor_serial.shutdown_now:
         print(f'estou no estado rastrear parede e diff error = {diff_error}')
 
         u = kp * (error + (1.0 / ti) * int_error + td * diff_error)
-        u_sat = max(-2 * base_speed, min(2 * base_speed, u))
+        #u_sat = max(-2 * base_speed, min(2 * base_speed, u))
+        u_sat = max(-50, min(50, u))
 
         if u == u_sat:
             int_error += error * execution_period
